@@ -49,7 +49,7 @@ def scanDevices():
             devicesList.append(ip)
 
     threads = [threading.Thread(target=ping, args=[str(ip)]) for ip in ipaddress.IPv4Network(network_id)]
-    timer_thread = threading.Timer(200, lambda: [t.join() for t in threads])
+    timer_thread = threading.Timer(60, lambda: [t.join() for t in threads])
 
     for thread in threads: thread.start()
     timer_thread.start()
