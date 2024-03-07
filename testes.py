@@ -1,39 +1,39 @@
-import subprocess
-import ipaddress
-import platform
-import threading
+import socket
+import binascii
 
-devicesList = []
+def get_mac_address(ip):
+    try:
+        # Criar um socket e conectar ao IP e porta 80
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((ip, 80))
 
-def scanDevices():
-    global devicesList
+        # Obter o endereço MAC do socket
+        mac = s.getsockname()[4]
 
-    def scan_with_timeout(ip):
-        global devicesList
-        system_platform = platform.system().lower()
-        command = ["ping", "-n", "1", ip] if system_platform == "windows" else ["ping", "-c", "1", ip]
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Converter o endereço MAC para uma representação hexadecimal
+        mac_hex = binascii.hexlify(mac)
 
-        try:
-            output = result.stdout.decode('utf-8')
-        except UnicodeDecodeError:
-            output = result.stdout.decode('latin-1')
+        # Formatar o endereço MAC
+        mac_address = ':'.join(mac_hex[i:i+2].decode() for i in range(0, len(mac_hex), 2))
 
-        if ("TTL=" in output and system_platform == "windows") or ('ttl=' in output and system_platform != "windows"):
-            print(f"IP ocupado: {ip}")
-            devicesList.append(ip)
+        return mac_address
 
-    threads = [threading.Thread(target=scan_with_timeout, args=[str(ip)]) for ip in ipaddress.IPv4Network(network_id)]
-    timer_thread = threading.Timer(20, lambda: [t.join() for t in threads])
+    except Exception as e:
+        print(f"Erro ao obter endereço MAC: {e}")
 
-    for thread in threads: thread.start()
-    timer_thread.start()
+    finally:
+        # Fechar o socket
+        if s:
+            s.close()
 
-    for thread in threads: thread.join()
-    timer_thread.cancel()
-
-    print(f"Dispositivos encontrados na rede: {devicesList}")
+    return None
 
 # Exemplo de uso
-network_id = '192.168.1.0/24'
-scanDevices(network_id)
+ip_to_check = '192.168.1.1'
+
+mac_address = get_mac_address(ip_to_check)
+
+if mac_address:
+    print(f"Endereço MAC para o IP {ip_to_check}: {mac_address}")
+else:
+    print(f"Não foi possível obter o endereço MAC para o IP {ip_to_check}")

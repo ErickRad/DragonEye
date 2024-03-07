@@ -23,11 +23,11 @@ def isConnected():
                         ipList = ipaddress.IPv4Network(network_id)
 
                 socket.create_connection(("www.google.com", 80), 5)
-                print("Você está conectado.")
+                print(f"Connected by {interface} with Network ID {network_id}")
                 return True
 
     except (socket.error, ConnectionError):
-        print("Não foi possível detectar uma rede ativa.")
+        print("Can't find any active network interface.")
         return False
 
 def scanDevices():
@@ -45,11 +45,11 @@ def scanDevices():
             output = result.stdout.decode('latin-1')
 
         if ("TTL=" in output and system_platform == "windows") or ('ttl=' in output and system_platform != "windows"):
-            print(f"IP ocupado: {ip}")
+            print(f"Device: {ip}")
             devicesList.append(ip)
 
     threads = [threading.Thread(target=ping, args=[str(ip)]) for ip in ipaddress.IPv4Network(network_id)]
-    timer_thread = threading.Timer(200, lambda: [t.join() for t in threads])
+    timer_thread = threading.Timer(60, lambda: [t.join() for t in threads])
 
     for thread in threads: thread.start()
     timer_thread.start()
@@ -57,7 +57,7 @@ def scanDevices():
     for thread in threads: thread.join()
     timer_thread.cancel()
 
-    print(f"Dispositivos encontrados na rede: {devicesList}")
+    print(f"Founded devices in Network: {devicesList}")
 
 isConnected()
 scanDevices()
