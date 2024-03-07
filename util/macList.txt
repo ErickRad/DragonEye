@@ -17743,6 +17743,7 @@
 78FEE2	Shanghai Diveo Technology Co., Ltd
 78FF57	Intel Corporate
 78FFCA	TECNO MOBILE LIMITED
+7ACB51  Samsung Electronics Co.,Ltd
 7C0187	Curtis Instruments, Inc.
 7C0191	Apple, Inc.
 7C02BC	Hansung Electronics Co. LTD
