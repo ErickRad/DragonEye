@@ -3,10 +3,10 @@ import os
 import ctypes
 import sys
 
-npcap_installer = r'util\npcap.exe'
+npcap_installer = r'util\drivers\npcap.exe'
 
 def install_requirements():
-    os.system(f"pip install -r requirements.txt")
+    os.system(r"pip install -r util\requirements.txt")
 
 def install_npcap():
     if os.path.exists(npcap_installer):
@@ -26,3 +26,4 @@ def install_npcap():
         print("O instalador do Npcap não foi encontrado.")
 
 install_requirements()
+install_npcap()

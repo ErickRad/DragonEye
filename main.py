@@ -1,35 +1,28 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
-from ttkthemes import ThemedStyle
 import backend
 
-def verify_connection():
-    result = backend.isConnected()
-    messagebox.showinfo("Network Connection", f"Network Connection: {result}")
-
-def check_devices():
-    if backend.isConnected():
-        devices = backend.scanDevices()
-        devices_info = "\n".join([f"IP: {device[0]}   MAC: {device[1]}   Brand: {device[2]}" for device in devices])
-        messagebox.showinfo("Devices on Network", devices_info)
-    else:
-        messagebox.showwarning("Warning", "Network is not connected. Please check your connection.")
-
 if __name__ == '__main__':
-    window = tk.Tk()
-    window.title("Dragon Eye")
+    while True:
+        option = int(input('''
+-------------------- DRAGON EYE ---------------------
 
-    # Configurar o estilo do tema escuro
-    style = ThemedStyle(window)
-    style.set_theme("equilux")
+1 - Verify your network connection
+2 - Check devices on your network
+3 - Perform a network speed test
+4 - Exit
 
-    btn_verify_connection = ttk.Button(window, text="Verify Network Connection", command=verify_connection)
-    btn_verify_connection.pack(pady=10)
+Choose an option: '''))
 
-    btn_check_devices = ttk.Button(window, text="Check Devices on Network", command=check_devices)
-    btn_check_devices.pack(pady=10)
+        match option:
+            case 1:
+                print(backend.isConnected())
+            case 2:
+                if backend.isConnected():
+                    devices = backend.scanDevices()
+                    for device in devices:
+                        print(f"IP: {device[0]}       MAC: {device[1]}       Brand: {device[2]}")
+                    devices = None
+            case 3:
+                print(backend.checkInternetSpeed())
+            case _:
+                break
 
-    btn_exit = ttk.Button(window, text="Exit", command=window.destroy)
-    btn_exit.pack(pady=10)
-
-    window.mainloop()

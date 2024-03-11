@@ -15110,6 +15110,7 @@
 389592	Beijing Tendyron Corporation
 3897D6	Hangzhou H3C Technologies Co., Limited
 3898D8	MERITECH CO.,LTD
+389AF6  Samsung Electronics Co.,Ltd
 389F83	OTN Systems N.V.
 38A28C	SHENZHEN RF-LINK TECHNOLOGY CO.,LTD.
 38A4ED	Xiaomi Communications Co Ltd
@@ -15833,7 +15834,7 @@
 4C0FC7	Earda Electronics Co.,Ltd
 4C11BF	Zhejiang Dahua Technology Co., Ltd.
 4C1480	NOREGON SYSTEMS, INC
-4C14A3	TCL Technoly Electronics (Huizhou) Co., Ltd.
+4C14A3	TCL Technology Electronics (Huizhou) Co., Ltd.
 4C1694	shenzhen sibituo Technology Co., Ltd
 4C16F1	zte corporation
 4C17EB	Sagemcom Broadband SAS

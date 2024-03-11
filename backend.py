@@ -1,22 +1,27 @@
 import socket
 import psutil
 import ipaddress
-import speedtest
-import flask
+import time
 from scapy.layers.l2 import ARP, Ether
 from scapy.sendrecv import srp
+from scapy.layers.inet import IP, ICMP
+from scapy.sendrecv import sr1
 
 interfacesList = []
 devicesList = []
 deviceInfos = []
+responses = []
+
 interface = None
 network_id = None
 vendor = None
 
-app = flask.Flask(__name__)
-st = speedtest.Speedtest()
+count = 50
+delay = 0.01
+packet_len = " " * 32
 
-@app.route('/isConnected', methods=['GET'])
+icmp_packet = IP(dst="www.google.com") / ICMP() / packet_len
+
 def isConnected():
     global interfacesList, interface, network_id
     try:
@@ -28,18 +33,11 @@ def isConnected():
                         network_id = str(ipaddress.IPv4Network(f"{addr.address}/{addr.netmask}", strict=False))
 
                 socket.create_connection(("www.google.com", 80), 5)
-                return flask.jsonify({
-                    'is_connected': True,
-                    'interface': interface,
-                    'network_id': network_id
-                })
+                return True, interface, network_id
 
     except (socket.error, ConnectionError):
-        return flask.jsonify({
-            'is_connected': False
-        })
+        return False
 
-@app.route('/scanDevices', methods=['GET'])
 def scanDevices():
     isConnected()
     packet = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=network_id)
@@ -62,19 +60,23 @@ def scanDevices():
         deviceInfos = [received.psrc, str(received.hwsrc).upper(), vendor]
         devicesList.append(deviceInfos)
 
-    return flask.jsonify({
-        'devicesList': devicesList
-    })
+    return devicesList
 
-@app.route('/checkInternetSpeed', methods=['GET'])
 def checkInternetSpeed():
-    st = speedtest.Speedtest()
-    download = st.download() / 1_000_000
-    upload = st.upload() / 1_000_000
+    start = time.time()
+    for _ in range(count):
+        sent = time.time()
+        response = sr1(icmp_packet, timeout=1, verbose=0)
+        received = time.time()
 
-    return flask.jsonify({
-        'download': download,
-        'upload': upload
-    })
+        if response:
+            response_time = (received - sent) * 1_000
+            print(f"\rPing: {response_time:.2f} ms", end="")
+            responses.append(response_time)
+            time.sleep(delay)
 
-app.run(debug=True)
+    total_time = time.time() - start
+    avg_ping = sum(responses[-20:]) / len(responses[-20:])
+    speed = ((packet_len.__len__() * len(responses)) / total_time) / 100
+
+    return [avg_ping, speed]
