@@ -69,7 +69,6 @@ def checkInternetSpeed():
 
         if response:
             response_time = (received - sent) * 1_000
-            print(f"\rPing: {response_time:.2f} ms", end="")
             responses.append(response_time)
             time.sleep(0.01)
 
@@ -77,4 +76,4 @@ def checkInternetSpeed():
     avg_ping = sum(responses[-20:]) / len(responses[-20:])
     speed = ((packet_len.__len__() * len(responses)) / total_time) / 100
 
-    return [avg_ping, speed]
+    return [f"{avg_ping:.2f}", f"{speed:.2f}"]
