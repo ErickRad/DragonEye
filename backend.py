@@ -16,8 +16,6 @@ interface = None
 network_id = None
 vendor = None
 
-count = 50
-delay = 0.01
 packet_len = " " * 32
 
 icmp_packet = IP(dst="www.google.com") / ICMP() / packet_len
@@ -64,7 +62,7 @@ def scanDevices():
 
 def checkInternetSpeed():
     start = time.time()
-    for _ in range(count):
+    for _ in range(50):
         sent = time.time()
         response = sr1(icmp_packet, timeout=1, verbose=0)
         received = time.time()
@@ -73,7 +71,7 @@ def checkInternetSpeed():
             response_time = (received - sent) * 1_000
             print(f"\rPing: {response_time:.2f} ms", end="")
             responses.append(response_time)
-            time.sleep(delay)
+            time.sleep(0.01)
 
     total_time = time.time() - start
     avg_ping = sum(responses[-20:]) / len(responses[-20:])
